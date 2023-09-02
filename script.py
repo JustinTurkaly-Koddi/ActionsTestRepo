@@ -1,21 +1,22 @@
 import subprocess
 import datetime
+import json
 
 def run_command(command):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = process.communicate()
     return stdout.decode('utf-8'), stderr.decode('utf-8')
 
-def parse_pr_data(lines):
-    parsed_data = []
-    for line in lines:
-        fields = line.strip().split('\t')  # Remove newline and split by tab
-        if len(fields) >= 5:  # Assuming at least 5 fields exist
-            pr_number = fields[0]
-            pr_name = fields[1]
-            parsed_data.append({'number': pr_number, 'name': pr_name})
-    return parsed_data
+def build_milestone(prs):
+    for pr in prs:
+        pr_number = pr['number']
+        command = f"gh pr edit {pr_number} --milestone \"{milestone_name}\""
+        stdout,_ = run_command(command)
 
+def merge_prs(prs):
+    for pr in prs:
+        pr_number = pr['number']
+        run_command(f"gh pr merge {pr_number} --merge")
 
 # Authenticate with GitHub CLI
 # Uncomment the line below to run actual authentication (replace <your-personal-access-token>)
@@ -32,26 +33,30 @@ release_suffix = ".1" if current_hour < 12 else ".2"
 milestone_name = milestone_date + release_suffix
 
 # Uncomment below to Create a new milestone
-# run_command(f"gh api repos/JustinTurkaly-Koddi/ActionsTestRepo/milestones -f title={milestone_name}")
-# print(f"Created milestone: {milestone_name}")
+run_command(f"gh api repos/JustinTurkaly-Koddi/ActionsTestRepo/milestones -f title={milestone_name}")
+print(f"Created milestone: {milestone_name}")
+
 # Fetch PRs with specific labels and review status
-stdout_passed, _ = run_command("gh pr list --search \"is:pr is:open base:main label:'QA - passed' -label:'HOLD'\" --json number -q '.data[].number'")
-stdout_tbd, _ = run_command("gh pr list --search \"is:pr is:open base:main\"")
-# stdout_tbd, _ = run_command("gh pr list --search \"is:pr is:open base:master review:approved label:'QA - tbd' -label:'HOLD'\" --json number -q '.data[].number'")
+stdout_passed, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"QA - passed\" label:\"HOLD\"' --json number --json title")
+stdout_tbd, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"test\"' --json number --json title")
 
-# # Combine the fetched PRs
-all_prs = [stdout_tbd, stdout_tbd]
-parsed = parse_pr_data(all_prs)
+# Convert JSON strings to Python objects (lists in this case)
+passed_prs = json.loads(stdout_passed)
+tbd_prs = json.loads(stdout_tbd)
 
-# parsed_passed = parse_pr_data(stdout_passed)
-# parsed_tbd = parse_pr_data(stdout_tbd)
-# parsed_all = parse_pr_data(all_prs)
-# Print fetched PRs
-print(f"Fetched PRs with QA - passed label: {stdout_passed}")
-print(f"Fetched PRs with QA - tbd label: {stdout_tbd}")
-print(f"All fetched PRs: {parsed}")
+# Combine the two lists
+combined_prs = passed_prs + tbd_prs
 
-# Uncomment below to add PRs to the milestone and merge
-# for pr in all_prs:
-#     run_command(f"gh api repos/:owner/:repo/issues/{pr} -X PATCH -f milestone={milestone_name}")
-#     run_command(f"gh pr merge {pr} --merge")
+print(f"All fetched PRs: {combined_prs}")
+
+# Loop through PRs and add them to the milestone
+for pr in combined_prs:
+        pr_number = pr['number']
+        command = f"gh pr edit {pr_number} --milestone \"{milestone_name}\""
+        stdout,_ = run_command(command)
+
+# Loop through PRs and merge them
+for pr in combined_prs:
+    pr_number = pr['number']
+    run_command(f"gh pr merge {pr_number} --merge")
+
