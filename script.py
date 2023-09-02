@@ -17,7 +17,7 @@ def parse_pr_data(lines):
     return parsed_data
 
 
-# Authenticate with GitHub CLI
+# Authenticate with GitHub
 # Uncomment the line below to run actual authentication (replace <your-personal-access-token>)
 # run_command("gh auth login --with-token <your-personal-access-token>")
 
