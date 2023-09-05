@@ -46,7 +46,7 @@ parsed = parse_pr_data(all_prs)
 # parsed_passed = parse_pr_data(stdout_passed)
 # parsed_tbd = parse_pr_data(stdout_tbd)
 # parsed_all = parse_pr_data(all_prs)
-# Print fetched PRs
+# Print PRs
 print(f"Fetched PRs with QA - passed label: {stdout_passed}")
 print(f"Fetched PRs with QA - tbd label: {stdout_tbd}")
 print(f"All fetched PRs: {parsed}")
