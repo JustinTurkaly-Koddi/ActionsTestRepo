@@ -21,7 +21,7 @@ def parse_pr_data(lines):
 # Uncomment the line below to run actual authentication (replace <your-personal-access-token>)
 # run_command("gh auth login --with-token <your-personal-access-token>")
 
-# Generate a milestone name based on the current date
+# Generate a milestone name based on the date
 milestone_date = datetime.datetime.now().strftime("%Y%m%d")
 
 # Determine if it's morning or afternoon based on the 24-hour clock
