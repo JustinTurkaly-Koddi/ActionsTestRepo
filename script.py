@@ -16,14 +16,16 @@ milestone_date = datetime.datetime.now().strftime("%Y%m%d")
 
 # Determine if it's morning or afternoon based on the 24-hour clock
 current_hour = datetime.datetime.now().hour
+#todo fix this
 release_suffix = ".1" if current_hour < 12 else ".2"
 
 # Create the full milestone name
 milestone_name = milestone_date + release_suffix
 
 # Fetch PRs with specific labels and review status
-stdout_passed, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"QA - passed\" label:\"HOLD\"' --json number --json title")
-stdout_tbd, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"test\"' --json number --json title")
+#todo test review approval tag
+stdout_passed, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"QA - passed\" -label:\"HOLD\"' --json number --json title")
+stdout_tbd, _ = run_command("gh pr list --search 'is:pr is:open base:main label:\"QA - TBD\" -label:\"HOLD\"' --json number --json title")
 
 # Convert JSON strings to Python objects (lists in this case)
 passed_prs = json.loads(stdout_passed)
@@ -42,8 +44,10 @@ print(f"Created milestone: {milestone_name}")
 # Loop through PRs and add them to the milestone
 for pr in combined_prs:
     run_command(f"gh pr edit {pr['number']} --milestone \"{milestone_name}\"")
+    print(f"Added PR #{pr['number']} to milestone: {milestone_name}")
 
 # Loop through PRs and merge them
 for pr in combined_prs:
     run_command(f"gh pr merge {pr['number']} --merge")
+    print(f"Merge PR #{pr['number']} successful")
 
