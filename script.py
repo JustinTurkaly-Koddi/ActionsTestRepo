@@ -51,7 +51,7 @@ print(f"Fetched PRs with QA - passed label: {stdout_passed}")
 print(f"Fetched PRs with QA - tbd label: {stdout_tbd}")
 print(f"All fetched PRs: {parsed}")
 
-# Uncomment below to add PRs to the milestone and merge
+# Uncomment below to add PRs to the milestone and merge them
 # for pr in all_prs:
 #     run_command(f"gh api repos/:owner/:repo/issues/{pr} -X PATCH -f milestone={milestone_name}")
 #     run_command(f"gh pr merge {pr} --merge")
