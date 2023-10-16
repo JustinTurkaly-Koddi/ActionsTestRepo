@@ -19,7 +19,7 @@ def merge_branches(base, head, repo_owner, repo_name, github_token):
     else:
         print(f"Failed to merge: {response.content}")
 
-# You can fetch these from the environment variables in GitHub Actions
+# You can fetch these from the environment variables in GitHub
 github_token = "YOUR_PERSONAL_ACCESS_TOKEN"
 repo_owner = "JustinTurkaly-Koddi"
 repo_name = "ActionsTestRepo"
