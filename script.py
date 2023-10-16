@@ -9,7 +9,7 @@ def run_command(command):
 def parse_pr_data(lines):
     parsed_data = []
     for line in lines:
-        fields = line.strip().split('\t')  # Remove newline and split by tab
+        fields = line.strip().split('\t')  # Remove newline and split by
         if len(fields) >= 5:  # Assuming at least 5 fields exist
             pr_number = fields[0]
             pr_name = fields[1]
