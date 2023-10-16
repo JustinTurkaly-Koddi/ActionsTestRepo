@@ -10,7 +10,7 @@ def parse_pr_data(lines):
     parsed_data = []
     for line in lines:
         fields = line.strip().split('\t')  # Remove newline and split by tab
-        if len(fields) >= 5:  # Assuming at least 5 fields exist
+        if len(fields) >= 5:  # Assuming at least 5 fields
             pr_number = fields[0]
             pr_name = fields[1]
             parsed_data.append({'number': pr_number, 'name': pr_name})
